@@ -1,3 +1,18 @@
+const tableUrl = 'https://www.scrapethissite.com/pages/forms/';
+
+async function postUrl(url) {
+    const request = new XMLHttpRequest();
+    request.open('POST', './php/proxy.php', true);
+    request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    request.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+            console.log(this.responseText);
+        }
+    }
+    request.send(`url=${url}`);
+    return 'success';
+}
+
 function receiveAjax(url) {
     return new Promise(function (resolve, reject) {
         const request = new XMLHttpRequest();
@@ -22,32 +37,35 @@ function scrapeCountries() {
     });
 }
 
-function scrapeTable(){
+async function scrapeTable() {
     let resArray = new Array();
-    receiveAjax('./php/proxy.php').then(function (rawData){
-        let parser = new DOMParser();
-        let htmlDoc = parser.parseFromString(rawData.responseText, 'text/html');
+    const rawData = await receiveAjax('./php/proxy.php');
+    let parser = new DOMParser();
+    let htmlDoc = parser.parseFromString(rawData.responseText, 'text/html');
 
-        let tableHeaders = htmlDoc.getElementsByTagName('th');
-        let tableHeadersContent = new Array();
-        for(let i = 0; i < tableHeaders.length; ++i){
-            tableHeadersContent.push(tableHeaders[i].textContent.trim());
-        }
-        resArray.push(tableHeadersContent);
+    let tableHeaders = htmlDoc.getElementsByTagName('th');
+    let tableHeadersContent = new Array();
+    for (let i = 0; i < tableHeaders.length; ++i) {
+        tableHeadersContent.push(tableHeaders[i].textContent.trim());
+    }
+    resArray.push(tableHeadersContent);
 
-        let tableRows = htmlDoc.getElementsByTagName('tr');
-        for(let i = 0; i < tableRows.length; ++i){
-            let tableData = tableRows[i].getElementsByTagName('td');
-            let tableDataContent = new Array();
-            if(Array.isArray(tableData) || tableData.length){
-                for (let j = 0; j < tableData.length; j++) {
-                    tableDataContent.push(tableData[j].textContent.trim());
-                }
-                resArray.push(tableDataContent);
+    let tableRows = htmlDoc.getElementsByTagName('tr');
+    for (let i = 0; i < tableRows.length; ++i) {
+        let tableData = tableRows[i].getElementsByTagName('td');
+        let tableDataContent = new Array();
+        if (Array.isArray(tableData) || tableData.length) {
+            for (let j = 0; j < tableData.length; j++) {
+                tableDataContent.push(tableData[j].textContent.trim());
             }
+            resArray.push(tableDataContent);
         }
-    });
+    }
     return resArray;
 }
 
-console.log(scrapeTable());
+scrapeTable().then(table => {
+    for(let i = 0; i < table.length; ++i){
+        console.log(table[i].join(' '));
+    }
+})
