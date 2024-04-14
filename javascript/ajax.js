@@ -14,7 +14,7 @@ async function postUrl(url) {
 }
 
 function receiveAjax(url) {
-    return new Promise(function (resolve, reject) {
+    return new Promise(function (resolve) {
         const request = new XMLHttpRequest();
         request.open('GET', url, true);
         request.onreadystatechange = function () {
@@ -64,8 +64,8 @@ async function scrapeTable() {
     return resArray;
 }
 
-scrapeTable().then(table => {
-    for(let i = 0; i < table.length; ++i){
-        console.log(table[i].join(' '));
+scrapeTable().then(rawTable => {
+    for (let row = 0; row < rawTable.length; ++row) {
+        console.log(rawTable[row].join(' '));
     }
-})
+});
