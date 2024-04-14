@@ -1,6 +1,6 @@
 const tableUrl = 'https://www.scrapethissite.com/pages/forms/';
 
-function receiveAjax(fileUrl, pageUrl) {
+function receivePage(fileUrl, pageUrl) {
     return new Promise(function (resolve) {
         const request = new XMLHttpRequest();
         request.open('POST', fileUrl, true);
@@ -14,20 +14,9 @@ function receiveAjax(fileUrl, pageUrl) {
     });
 }
 
-function scrapeCountries() {
-    receiveAjax('./php/proxy.php').then(function (rawData) {
-        let parser = new DOMParser();
-        let htmlDoc = parser.parseFromString(rawData.responseText, 'text/html');
-        let countries = htmlDoc.getElementsByClassName('country-name');
-        for (let i = 0; i < countries.length; ++i) {
-            console.log(countries[i].textContent.trim());
-        }
-    });
-}
-
 async function scrapeTable() {
     let resArray = new Array();
-    const rawData = await receiveAjax('./php/proxy.php', tableUrl);
+    const rawData = await receivePage('./php/proxy.php', tableUrl);
     let parser = new DOMParser();
     let htmlDoc = parser.parseFromString(rawData.responseText, 'text/html');
 
