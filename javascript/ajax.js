@@ -1,4 +1,5 @@
 const tableUrl = 'https://www.scrapethissite.com/pages/forms/';
+const websiteUrl = 'https://www.scrapethissite.com';
 
 function receivePage(fileUrl, pageUrl) {
     return new Promise(function (resolve) {
@@ -41,8 +42,18 @@ async function scrapeTable() {
     return resArray;
 }
 
-scrapeTable().then(rawTable => {
-    for (let row = 0; row < rawTable.length; ++row) {
-        console.log(rawTable[row].join(' '));
+async function scrapePagination(){
+    let resArray = new Array();
+    const rawData = await receivePage('./php/proxy.php', tableUrl);
+    let parser = new DOMParser();
+    let htmlDoc = parser.parseFromString(rawData.responseText, 'text/html');
+
+    let paginationAnchors = htmlDoc.querySelectorAll('.pagination a');
+    for(let i = 0; i < paginationAnchors.length; ++i){
+        if(paginationAnchors[i].ariaLabel != null){
+            continue;
+        }
+        resArray.push(paginationAnchors[i].getAttribute('href'));
     }
-});
+    return resArray;
+}
