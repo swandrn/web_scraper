@@ -15,9 +15,9 @@ function receivePage(fileUrl, pageUrl) {
     });
 }
 
-async function scrapeTable() {
+async function scrapeTable(page) {
     let resArray = new Array();
-    const rawData = await receivePage('./php/proxy.php', tableUrl);
+    const rawData = await receivePage('./php/proxy.php', page);
     let parser = new DOMParser();
     let htmlDoc = parser.parseFromString(rawData.responseText, 'text/html');
 
@@ -57,3 +57,16 @@ async function scrapePagination(){
     }
     return resArray;
 }
+
+async function main(){
+    let tables = new Array();
+    const pages = await scrapePagination();
+    while(pages?.length){
+        let table = await scrapeTable(websiteUrl.concat(pages.shift()));
+        tables.push(table);
+    }
+    console.log(pages);
+    console.log(tables);
+}
+
+main();
