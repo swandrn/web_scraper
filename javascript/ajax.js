@@ -1,28 +1,16 @@
 const tableUrl = 'https://www.scrapethissite.com/pages/forms/';
 
-async function postUrl(url) {
-    const request = new XMLHttpRequest();
-    request.open('POST', './php/proxy.php', true);
-    request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    request.onreadystatechange = function () {
-        if (this.readyState === 4 && this.status === 200) {
-            console.log(this.responseText);
-        }
-    }
-    request.send(`url=${url}`);
-    return 'success';
-}
-
-function receiveAjax(url) {
+function receiveAjax(fileUrl, pageUrl) {
     return new Promise(function (resolve) {
         const request = new XMLHttpRequest();
-        request.open('GET', url, true);
+        request.open('POST', fileUrl, true);
+        request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         request.onreadystatechange = function () {
             if (this.readyState === 4 && this.status === 200) {
                 resolve(this);
             }
         };
-        request.send(null);
+        request.send(`url=${pageUrl}`);
     });
 }
 
@@ -39,7 +27,7 @@ function scrapeCountries() {
 
 async function scrapeTable() {
     let resArray = new Array();
-    const rawData = await receiveAjax('./php/proxy.php');
+    const rawData = await receiveAjax('./php/proxy.php', tableUrl);
     let parser = new DOMParser();
     let htmlDoc = parser.parseFromString(rawData.responseText, 'text/html');
 
