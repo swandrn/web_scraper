@@ -1,72 +1,40 @@
+import puppeteer from 'puppeteer';
+
 const tableUrl = 'https://www.scrapethissite.com/pages/forms/';
+const ajaxUrl = 'https://www.scrapethissite.com/pages/ajax-javascript/';
 const websiteUrl = 'https://www.scrapethissite.com';
 
-function receivePage(fileUrl, pageUrl) {
-    return new Promise(function (resolve) {
-        const request = new XMLHttpRequest();
-        request.open('POST', fileUrl, true);
-        request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        request.onreadystatechange = function () {
-            if (this.readyState === 4 && this.status === 200) {
-                resolve(this);
-            }
-        };
-        request.send(`url=${pageUrl}`);
-    });
-}
-
-async function scrapeTable(page) {
+async function scrapePagination(pPage, selector) {
     let resArray = new Array();
-    const rawData = await receivePage('./php/proxy.php', page);
-    let parser = new DOMParser();
-    let htmlDoc = parser.parseFromString(rawData.responseText, 'text/html');
 
-    let tableHeaders = htmlDoc.getElementsByTagName('th');
-    let tableHeadersContent = new Array();
-    for (let i = 0; i < tableHeaders.length; ++i) {
-        tableHeadersContent.push(tableHeaders[i].textContent.trim());
-    }
-    resArray.push(tableHeadersContent);
-
-    let tableRows = htmlDoc.getElementsByTagName('tr');
-    for (let i = 0; i < tableRows.length; ++i) {
-        let tableData = tableRows[i].getElementsByTagName('td');
-        let tableDataContent = new Array();
-        if (Array.isArray(tableData) || tableData.length) {
-            for (let j = 0; j < tableData.length; j++) {
-                tableDataContent.push(tableData[j].textContent.trim());
-            }
-            resArray.push(tableDataContent);
-        }
-    }
-    return resArray;
-}
-
-async function scrapePagination(){
-    let resArray = new Array();
-    const rawData = await receivePage('./php/proxy.php', tableUrl);
-    let parser = new DOMParser();
-    let htmlDoc = parser.parseFromString(rawData.responseText, 'text/html');
-
-    let paginationAnchors = htmlDoc.querySelectorAll('.pagination a');
-    for(let i = 0; i < paginationAnchors.length; ++i){
-        if(paginationAnchors[i].ariaLabel != null){
+    let paginationAnchors = await pPage.$$(selector);
+    
+    for (let paginationAnchor of paginationAnchors) {
+        let ariaLabel = await pPage.evaluate(el => el.ariaLabel, paginationAnchor);
+        if(ariaLabel != null){
             continue;
         }
-        resArray.push(paginationAnchors[i].getAttribute('href'));
+        const attr = await pPage.evaluate(el => el.getAttribute('href'), paginationAnchor);
+        resArray.push(attr);
     }
     return resArray;
 }
 
-async function main(){
-    let tables = new Array();
-    const pages = await scrapePagination();
-    while(pages?.length){
-        let table = await scrapeTable(websiteUrl.concat(pages.shift()));
-        tables.push(table);
-    }
-    console.log(pages);
-    console.log(tables);
+async function main() {
+    // Launch the browser and open a new blank page
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+    // Navigate the page to a URL
+    await page.goto(tableUrl);
+
+    // Set screen size
+    await page.setViewport({ width: 1080, height: 1024 });
+
+    let pagination = await scrapePagination(page, '.pagination a');
+    console.log(pagination);
+
+    await browser.close();
 }
 
 main();
