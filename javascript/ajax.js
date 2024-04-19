@@ -1,38 +1,79 @@
 import puppeteer from 'puppeteer';
 
 const tableUrl = 'https://www.scrapethissite.com/pages/forms/';
-const ajaxUrl = 'https://www.scrapethissite.com/pages/ajax-javascript/';
+const moviesUrl = 'https://www.scrapethissite.com/pages/ajax-javascript/';
 const websiteUrl = 'https://www.scrapethissite.com';
 
-async function scrapePagination(pPage, selector) {
+async function scrapeRequest(pPage, selector, hasAjax = false) {
     let resArray = new Array();
+    let selectorIsNumberRegexp = /(#\d+)|(.\d+)/g
+    let digitOnlySelectors = selector.match(selectorIsNumberRegexp);
+    let escapedSelectors = await escapeNumberSelector(digitOnlySelectors);
 
-    let paginationAnchors = await pPage.$$(selector);
-    
-    for (let paginationAnchor of paginationAnchors) {
-        let ariaLabel = await pPage.evaluate(el => el.ariaLabel, paginationAnchor);
-        if(ariaLabel != null){
-            continue;
+    //Escapes all digit only CSS selectors;
+    if(digitOnlySelectors?.length){
+        for(let i = 0; i < digitOnlySelectors.length; ++i){
+            selector = selector.replace(digitOnlySelectors[i], escapedSelectors[i]);
         }
-        const attr = await pPage.evaluate(el => el.getAttribute('href'), paginationAnchor);
-        resArray.push(attr);
     }
+    
+    let elements = await pPage.$$(selector);
+
+    if (!hasAjax) {
+        for(let element of elements){
+            const el = await pPage.evaluate(el => el.textContent, element);
+            resArray.push(el);
+        }
+    }
+
+    if (hasAjax) {
+        if (elements?.length) {
+            for (let i = 0; i < elements.length; ++i) {
+                await elements[i].evaluate(el => el.click());
+
+                const response = await pPage.waitForResponse(async resp => {
+                    return (await resp.url().includes('https://www.scrapethissite.com/pages/ajax-javascript/'));
+                });
+
+                if (response.ok()) {
+                    let jsonArray = await (response.json());
+                    for (let row = 0; row < jsonArray.length; ++row) {
+                        resArray.push(jsonArray[row]);
+                    }
+                }
+            }
+        }
+    }
+    console.log(resArray);
     return resArray;
 }
 
+async function escapeNumberSelector(numbers){
+    let cssEscape = '\\3';
+    let escapedSelectors = new Array();
+    for(let row = 0; row < numbers.length; ++row){
+        let escapedSelector = '';
+        for(let col = 0; col < numbers[row].length; ++col){
+            if(col == 1){
+                escapedSelector += `${cssEscape}${numbers[row][col]} `;
+                continue
+            }
+            escapedSelector += numbers[row][col];
+        }
+        escapedSelectors.push(escapedSelector);
+    }
+    return escapedSelectors;
+}
+
 async function main() {
-    // Launch the browser and open a new blank page
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
-    // Navigate the page to a URL
-    await page.goto(tableUrl);
+    await page.goto(moviesUrl);
 
-    // Set screen size
     await page.setViewport({ width: 1080, height: 1024 });
 
-    let pagination = await scrapePagination(page, '.pagination a');
-    console.log(pagination);
+    await scrapeRequest(page, '.year-link#2014', true);
 
     await browser.close();
 }
