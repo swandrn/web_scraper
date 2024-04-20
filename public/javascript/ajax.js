@@ -1,24 +1,35 @@
-const p = document.getElementById('myP');
+const scrapeAPI = './api/scrape-request';
 
-async function getAjax(url){
+const scrapeRequestWrapper = document.getElementById('scrape-request-wrapper');
+const urlInput = document.getElementById('url-input');
+const selectorInput = document.getElementById('selector-input');
+const hasAjaxInput = document.getElementById('has-ajax-input');
+const scrapeButton = document.getElementById('scrape-button');
+
+async function getScrapedData(requestUrl, urlToScrape, selector, hasAjax){
+    let params = `urlToScrape=${urlToScrape}&selector=${selector}&hasAjax=${hasAjax}`;
     return new Promise(function (resolve, reject){
         const request = new XMLHttpRequest();
-        request.open('GET', url);
-        //request.setRequestHeader('Content-Type', 'application/json');
+        request.open('POST', requestUrl);
+        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         request.onreadystatechange = function(){
             if(request.readyState === 4 && request.status === 200){
                 resolve(this);
             }
         }
-        request.send();
+        request.send(params);
     });
 }
 
 async function main(){
-    p.textContent = 'empty';
-    let response = await getAjax('./api/scrape-request');
-    p.textContent = response.responseText;
-    console.log(response.response);
+    let urlValue = urlInput.value;
+    let selectorValue = selectorInput.value;
+    let hasAjaxValue = hasAjaxInput.checked ? 'true' : 'false';
+
+    let response = await getScrapedData(scrapeAPI, urlValue, selectorValue, hasAjaxValue);
+    let textResponse = document.createElement('p');
+    textResponse.textContent = response.responseText;
+    scrapeRequestWrapper.append(textResponse);
 }
 
-main();
+scrapeButton.addEventListener('click', main);

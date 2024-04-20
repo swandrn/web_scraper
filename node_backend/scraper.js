@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const path = require('path');
 const puppeteer = require('puppeteer');
 
@@ -46,7 +47,6 @@ async function scrapeRequest(pPage, selector, hasAjax = false) {
             }
         }
     }
-    console.log(resArray);
     return resArray;
 }
 
@@ -73,18 +73,25 @@ async function main() {
     //Set default route of static files to be called in index.html
     app.use(express.static('public'));
 
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({extended: true}));
+
     app.get('/', (req, res) => {
         res.sendFile(path.join(process.cwd(), '/index.html'));
     });
     
-    app.get('/api/scrape-request', async (req, res) => {
+    app.post('/api/scrape-request', async (req, res) => {
+        let urlToScrape = req.body.urlToScrape;
+        let selector = req.body.selector;
+        let hasAjax = req.body.hasAjax == 'true' ? true : false;
+
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
         
-        await page.goto(moviesUrl);
+        await page.goto(urlToScrape);
         await page.setViewport({ width: 1080, height: 1024 });
         
-        const scrapedData = await scrapeRequest(page, '.year-link#2012', true);
+        const scrapedData = await scrapeRequest(page, selector, hasAjax);
         
         await browser.close();
 

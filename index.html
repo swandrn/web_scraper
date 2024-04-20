@@ -9,7 +9,17 @@
 
 <body>
     <h1>My first Scraper</h1>
-    <p id="myP">doesn't work</p>
+    <div id="scrape-request-wrapper">
+        <fieldset>
+            <label for="url-input">Website to be scraped: </label>
+            <input type="text" id="url-input">
+            <label for="selector-input">Selector to use: </label>
+            <input type="text" id="selector-input">
+            <label for="has-ajax-input">Has ajax (check for yes): </label>
+            <input type="checkbox" id="has-ajax-input">
+            <button type="button" id="scrape-button">Scrape</button>
+        </fieldset>
+    </div>
     <script type='text/javascript' src='./javascript/ajax.js'></script>
 </body>
 
