@@ -1,4 +1,6 @@
-import puppeteer from 'puppeteer';
+const express = require('express');
+const path = require('path');
+const puppeteer = require('puppeteer');
 
 const tableUrl = 'https://www.scrapethissite.com/pages/forms/';
 const moviesUrl = 'https://www.scrapethissite.com/pages/ajax-javascript/';
@@ -66,16 +68,27 @@ async function escapeNumberSelector(numbers){
 }
 
 async function main() {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
+    const app = express();
 
-    await page.goto(moviesUrl);
+    app.get('/', (req, res) => {
+        res.sendFile(path.join(__dirname, '../index.html'));
+    });
 
-    await page.setViewport({ width: 1080, height: 1024 });
+    app.get('/api/scrape-request', async (req, res) => {
+        const scrapedData = await scrapeRequest(page, '.year-link#2012', true);
+        res.json(scrapedData);
+    });
 
-    await scrapeRequest(page, '.year-link#2014', true);
+    app.listen(8080, async () => {
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+        
+        await page.goto(moviesUrl);
+        await page.setViewport({ width: 1080, height: 1024 });
 
-    await browser.close();
+    
+        await browser.close();
+    });    
 }
 
 main();
