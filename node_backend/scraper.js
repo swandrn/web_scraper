@@ -70,25 +70,28 @@ async function escapeNumberSelector(numbers){
 async function main() {
     const app = express();
 
+    app.use(express.static(process.cwd()))
+
     app.get('/', (req, res) => {
-        res.sendFile(path.join(__dirname, '../index.html'));
+        res.sendFile(path.join(process.cwd(), '/index.html'));
     });
-
+    
     app.get('/api/scrape-request', async (req, res) => {
-        const scrapedData = await scrapeRequest(page, '.year-link#2012', true);
-        res.json(scrapedData);
-    });
-
-    app.listen(8080, async () => {
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
         
         await page.goto(moviesUrl);
         await page.setViewport({ width: 1080, height: 1024 });
-
-    
+        
+        const scrapedData = await scrapeRequest(page, '.year-link#2012', true);
+        
         await browser.close();
-    });    
+
+        res.type('json');
+        res.json(scrapedData);
+    });
+    
+    app.listen(5000);
 }
 
 main();
