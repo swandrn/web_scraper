@@ -3,11 +3,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const puppeteer = require('puppeteer');
 
-const tableUrl = 'https://www.scrapethissite.com/pages/forms/';
-const moviesUrl = 'https://www.scrapethissite.com/pages/ajax-javascript/';
-const websiteUrl = 'https://www.scrapethissite.com';
-
-async function scrapeRequest(pPage, selector, hasAjax = false) {
+async function scrapeRequest(pPage, selector, expectedUrl, hasAjax = false) {
     let resArray = new Array();
     let selectorIsNumberRegexp = /(#\d+)|(.\d+)/g
     let digitOnlySelectors = selector.match(selectorIsNumberRegexp);
@@ -24,7 +20,7 @@ async function scrapeRequest(pPage, selector, hasAjax = false) {
 
     if (!hasAjax) {
         for(let element of elements){
-            const el = await pPage.evaluate(el => el.textContent, element);
+            const el = await pPage.evaluate(el => el.textContent.trim(), element);
             resArray.push(el);
         }
     }
@@ -35,7 +31,7 @@ async function scrapeRequest(pPage, selector, hasAjax = false) {
                 await elements[i].evaluate(el => el.click());
 
                 const response = await pPage.waitForResponse(async resp => {
-                    return (await resp.url().includes('https://www.scrapethissite.com/pages/ajax-javascript/'));
+                    return (await resp.url().includes(expectedUrl));
                 });
 
                 if (response.ok()) {
@@ -83,6 +79,7 @@ async function main() {
     app.post('/api/scrape-request', async (req, res) => {
         let urlToScrape = req.body.urlToScrape;
         let selector = req.body.selector;
+        let expectedUrl = req.body.expectedUrl;
         let hasAjax = req.body.hasAjax == 'true' ? true : false;
 
         const browser = await puppeteer.launch();
@@ -91,7 +88,7 @@ async function main() {
         await page.goto(urlToScrape);
         await page.setViewport({ width: 1080, height: 1024 });
         
-        const scrapedData = await scrapeRequest(page, selector, hasAjax);
+        const scrapedData = await scrapeRequest(page, selector, expectedUrl, hasAjax);
         
         await browser.close();
 
