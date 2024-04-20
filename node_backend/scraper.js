@@ -70,7 +70,8 @@ async function escapeNumberSelector(numbers){
 async function main() {
     const app = express();
 
-    app.use(express.static(process.cwd()))
+    //Set default route of static files to be called in index.html
+    app.use(express.static('public'));
 
     app.get('/', (req, res) => {
         res.sendFile(path.join(process.cwd(), '/index.html'));
