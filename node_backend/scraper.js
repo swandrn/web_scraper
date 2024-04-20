@@ -11,10 +11,10 @@ async function scrapeRequest(pPage, selector, hasAjax = false) {
     let resArray = new Array();
     let selectorIsNumberRegexp = /(#\d+)|(.\d+)/g
     let digitOnlySelectors = selector.match(selectorIsNumberRegexp);
-    let escapedSelectors = await escapeNumberSelector(digitOnlySelectors);
-
+    
     //Escapes all digit only CSS selectors;
     if(digitOnlySelectors?.length){
+        let escapedSelectors = await escapeNumberSelector(digitOnlySelectors);
         for(let i = 0; i < digitOnlySelectors.length; ++i){
             selector = selector.replace(digitOnlySelectors[i], escapedSelectors[i]);
         }
