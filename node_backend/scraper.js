@@ -110,7 +110,7 @@ async function scrapeAnchor(pPage, selector, expectedUrl, hasAjax = false) {
 }
 
 /**
- * 
+ * Table scraper
  * @param {page} pPage web page
  * @param {string} selector CSS selector
  * @returns array
