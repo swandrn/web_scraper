@@ -57,6 +57,59 @@ async function scrapeRequest(pPage, selector, expectedUrl, hasAjax = false) {
 }
 
 /**
+ * Anchor scraper
+ * @param {page} pPage web page
+ * @param {string} selector CSS selector
+ * @param {string} expectedUrl the URL the ajax takes you to
+ * @param {boolean} hasAjax whether the request requires ajax handling
+ * @returns array
+ */
+async function scrapeAnchor(pPage, selector, expectedUrl, hasAjax = false) {
+    let resArray = new Array();
+    let selectorIsNumberRegexp = /(#\d+)|(.\d+)/g;
+    let digitOnlySelectors = selector.match(selectorIsNumberRegexp);
+    
+    //Escapes all digit only CSS selectors;
+    if(digitOnlySelectors?.length){
+        let escapedSelectors = await escapeNumberSelector(digitOnlySelectors);
+        for(let i = 0; i < digitOnlySelectors.length; ++i){
+            selector = selector.replace(digitOnlySelectors[i], escapedSelectors[i]);
+        }
+    }
+
+    let elements = await pPage.$$(selector);
+
+    if (!hasAjax) {
+        if (elements?.length) {
+            for (let row = 0; row < elements.length; ++row) {
+                const el = await pPage.evaluate(el => el.textContent.trim(), elements[row]);
+                resArray.push(el);
+            }
+        }
+    }
+
+    if (hasAjax) {
+        if (elements?.length) {
+            for (let i = 0; i < elements.length; ++i) {
+                await elements[i].evaluate(el => el.click());
+
+                const response = await pPage.waitForResponse(async resp => {
+                    return (await resp.url().includes(expectedUrl));
+                });
+
+                if (response.ok()) {
+                    let jsonArray = await (response.json());
+                    for (let row = 0; row < jsonArray.length; ++row) {
+                        resArray.push(jsonArray[row]);
+                    }
+                }
+            }
+        }
+    }
+    return resArray;
+}
+
+/**
  * 
  * @param {page} pPage web page
  * @param {string} selector CSS selector
@@ -139,7 +192,7 @@ async function main() {
                 scrapedData = await scrapeRequest(page, selector);
                 break;
             case 'anchor':
-                scrapedData = await scrapeRequest(page, selector, expectedUrl, hasAjax);
+                scrapedData = await scrapeAnchor(page, selector, expectedUrl, hasAjax);
             default:
                 break;
         }
