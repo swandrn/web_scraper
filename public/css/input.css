@@ -7,6 +7,7 @@ fieldset {
     height: 2em;
 }
 
+/*Divs around label + input*/
 .input-text-wrapper,
 .input-select-wrapper,
 .input-checkbox-wrapper {
@@ -17,6 +18,15 @@ fieldset {
     background-color: rgba(241, 241, 241, 1);
 }
 
+/*All content of each div*/
+.input-text-wrapper > *,
+.input-select-wrapper > *,
+.input-checkbox-wrapper > * {
+    height: 100%;
+    padding: .2rem .3rem;
+}
+
+/*Label of each div*/
 .input-text-wrapper > label,
 .input-select-wrapper > label,
 .input-checkbox-wrapper > label {
@@ -28,19 +38,14 @@ fieldset {
     color: white;
 }
 
-.input-text-wrapper > *,
-.input-select-wrapper > *,
-.input-checkbox-wrapper > * {
-    height: 100%;
-    padding: .2rem .3rem;
-}
-
+/*Select box*/
 select {
     background-color: rgba(241, 241, 241, 1);
     border: none;
     outline: .2rem solid rgba(241, 241, 241, 1);
 }
 
+/*Text input*/
 input[type=text] {
     border: 0;
     background-color: rgba(241, 241, 241, 1);
@@ -50,12 +55,13 @@ input[type=text]:hover{
     background-color: rgb(214, 214, 214);
 }
 
+/*Checkbox input*/
 input[type=checkbox]{
     outline: .2rem solid rgba(241, 241, 241, 1);
 }
 
+/*Button*/
 button {
-    display: inline-block;
     height: 100%;
     padding: .2rem .3rem;
     border: 1px solid #008CBA;

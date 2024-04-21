@@ -7,7 +7,6 @@ const tagToScrapeInput = document.getElementById('tag-to-scrape-input');
 const expectedUrlInput = document.getElementById('expected-url-input');
 const hasAjaxInput = document.getElementById('has-ajax-input');
 const scrapeButton = document.getElementById('scrape-button');
-const labels = document.getElementsByTagName('label');
 
 async function getScrapedData(requestUrl, urlToScrape, tagToScrape, selector, expectedUrl, hasAjax){
     let params = `urlToScrape=${urlToScrape}&tagToScrape=${tagToScrape}&selector=${selector}&expectedUrl=${expectedUrl}&hasAjax=${hasAjax}`;
@@ -90,40 +89,16 @@ async function createTable(array) {
 function toggleInputs(event){
     switch (event.target.value) {
         case 'table':
-            for(let label of labels){
-                if(label.htmlFor == expectedUrlInput.id){
-                    label.classList.add('hidden');
-                    expectedUrlInput.classList.add('hidden');
-                }
-                if(label.htmlFor == hasAjaxInput.id){
-                    label.classList.add('hidden');
-                    hasAjaxInput.classList.add('hidden');
-                }
-            }
+            expectedUrlInput.parentElement.classList.add('hidden');
+            hasAjaxInput.parentElement.classList.add('hidden');
             break;
         case 'text':
-            for(let label of labels){
-                if(label.htmlFor == expectedUrlInput.id){
-                    label.classList.add('hidden');
-                    expectedUrlInput.classList.add('hidden');
-                }
-                if(label.htmlFor == hasAjaxInput.id){
-                    label.classList.add('hidden');
-                    hasAjaxInput.classList.add('hidden');
-                }
-            }
+            expectedUrlInput.parentElement.classList.add('hidden');
+            hasAjaxInput.parentElement.classList.add('hidden');
             break;
         case 'anchor':
-            for(let label of labels){
-                if(label.htmlFor == expectedUrlInput.id){
-                    label.classList.remove('hidden');
-                    expectedUrlInput.classList.remove('hidden');
-                }
-                if(label.htmlFor == hasAjaxInput.id){
-                    label.classList.remove('hidden');
-                    hasAjaxInput.classList.remove('hidden');
-                }
-            }
+            expectedUrlInput.parentElement.classList.remove('hidden');
+            hasAjaxInput.parentElement.classList.remove('hidden');
             break;
         default:
             break;
