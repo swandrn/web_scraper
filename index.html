@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/display.css">
     <title>Scraper</title>
 </head>
 
@@ -13,6 +14,13 @@
         <fieldset>
             <label for="url-input">Website to be scraped: </label>
             <input type="text" id="url-input">
+            <label for="tag-to-scrape-input">HTML tag to scrape</label>
+            <select id="tag-to-scrape-input">
+                <option value="" selected disabled hidden>Choose tag</option>
+                <option value="table">Table</option>
+                <option value="text">Text</option>
+                <option value="anchor">Anchor</option>
+            </select>
             <label for="selector-input">Selector to use: </label>
             <input type="text" id="selector-input">
             <label for="expected-url-input">Expected URL to receive data</label>
