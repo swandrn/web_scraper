@@ -15,13 +15,15 @@ async function scrapeRequest(pPage, selector, expectedUrl, hasAjax = false) {
             selector = selector.replace(digitOnlySelectors[i], escapedSelectors[i]);
         }
     }
-    
+
     let elements = await pPage.$$(selector);
 
     if (!hasAjax) {
-        for(let element of elements){
-            const el = await pPage.evaluate(el => el.textContent.trim(), element);
-            resArray.push(el);
+        if (elements?.length) {
+            for (let row = 0; row < elements.length; ++row) {
+                const el = await pPage.evaluate(el => el.textContent.trim(), elements[row]);
+                resArray.push(el);
+            }
         }
     }
 

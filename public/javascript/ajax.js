@@ -28,9 +28,12 @@ async function main(){
     let hasAjaxValue = hasAjaxInput.checked ? 'true' : 'false';
     let expectedUrlValue = expectedUrlInput.value;
 
-    let response = await getScrapedData(scrapeAPI, urlValue, selectorValue, expectedUrlValue, hasAjaxValue);
+    let elements = await getScrapedData(scrapeAPI, urlValue, selectorValue, expectedUrlValue, hasAjaxValue);
     let textResponse = document.createElement('p');
-    textResponse.textContent = response.responseText;
+    
+    for(let element of elements){
+        textResponse.append(`${element.textContent}\n`)
+    }
     scrapeRequestWrapper.append(textResponse);
 }
 
