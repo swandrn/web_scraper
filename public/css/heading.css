@@ -1,0 +1,8 @@
+.heading-wrapper{
+    width: fit-content;
+    margin: 0 auto;
+    padding: .1rem .3rem;
+    background-color: #008CBA;
+    color: white;
+    border-radius: 5px;
+}

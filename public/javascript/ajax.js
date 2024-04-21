@@ -8,6 +8,16 @@ const expectedUrlInput = document.getElementById('expected-url-input');
 const hasAjaxInput = document.getElementById('has-ajax-input');
 const scrapeButton = document.getElementById('scrape-button');
 
+/**
+ * Sends POST request to node.js API
+ * @param {string} requestUrl url to the node API
+ * @param {string} urlToScrape url of the website to scrape
+ * @param {string} tagToScrape html tag to scrape
+ * @param {string} selector CSS selector
+ * @param {string} expectedUrl url the web page will call upon AJAX request
+ * @param {string} hasAjax whether the scrape request requires AJAX handling
+ * @returns Promise<XMLHttpRequest>
+ */
 async function getScrapedData(requestUrl, urlToScrape, tagToScrape, selector, expectedUrl, hasAjax){
     let params = `urlToScrape=${urlToScrape}&tagToScrape=${tagToScrape}&selector=${selector}&expectedUrl=${expectedUrl}&hasAjax=${hasAjax}`;
     return new Promise(function (resolve, reject){
@@ -23,6 +33,11 @@ async function getScrapedData(requestUrl, urlToScrape, tagToScrape, selector, ex
     });
 }
 
+/**
+ * Create a table from 1D or 2D arrays, also handles array of Objects
+ * @param {array} array 
+ * @returns array | string
+ */
 async function createTable(array) {
     const table = document.createElement('table');
     const tbody = document.createElement('tbody');
@@ -86,6 +101,10 @@ async function createTable(array) {
     return 'Element is not an array';
 }
 
+/**
+ * Toggle input display
+ * @param {event} event 
+ */
 function toggleInputs(event){
     switch (event.target.value) {
         case 'table':
