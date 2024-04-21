@@ -112,9 +112,10 @@ async function main() {
     
     app.post('/api/scrape-request', async (req, res) => {
         let urlToScrape = req.body.urlToScrape;
+        let tagToScrape = req.body.tagToScrape;
         let selector = req.body.selector;
-        // let expectedUrl = req.body.expectedUrl;
-        // let hasAjax = req.body.hasAjax == 'true' ? true : false;
+        let expectedUrl = req.body.expectedUrl;
+        let hasAjax = req.body.hasAjax == 'true' ? true : false;
 
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
@@ -122,8 +123,20 @@ async function main() {
         await page.goto(urlToScrape);
         await page.setViewport({ width: 1080, height: 1024 });
         
-        // const scrapedData = await scrapeRequest(page, selector, expectedUrl, hasAjax);
-        const scrapedData = await scrapeTable(page, selector);
+        let scrapedData;
+
+        switch (tagToScrape) {
+            case 'table':
+                scrapedData = await scrapeTable(page, selector);
+                break;
+            case 'text':
+                scrapedData = await scrapeRequest(page, selector);
+                break;
+            case 'anchor':
+                scrapedData = await scrapeRequest(page, selector, expectedUrl, hasAjax);
+            default:
+                break;
+        }
         
         await browser.close();
 
