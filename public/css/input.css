@@ -12,7 +12,6 @@ fieldset {
 .input-select-wrapper,
 .input-checkbox-wrapper {
     display: flex;
-    justify-content: center;
     align-items: center;
     height: 100%;
     background-color: rgba(241, 241, 241, 1);
@@ -23,7 +22,7 @@ fieldset {
 .input-select-wrapper > *,
 .input-checkbox-wrapper > * {
     height: 100%;
-    padding: .2rem .3rem;
+    padding: 0 .3rem;
 }
 
 /*Label of each div*/
@@ -42,7 +41,6 @@ fieldset {
 select {
     background-color: rgba(241, 241, 241, 1);
     border: none;
-    outline: .2rem solid rgba(241, 241, 241, 1);
 }
 
 /*Text input*/
@@ -56,8 +54,8 @@ input[type=text]:hover{
 }
 
 /*Checkbox input*/
-input[type=checkbox]{
-    outline: .2rem solid rgba(241, 241, 241, 1);
+input[type=checkbox]:checked{
+    accent-color: #008CBA;
 }
 
 /*Button*/
