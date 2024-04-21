@@ -56,6 +56,12 @@ async function scrapeRequest(pPage, selector, expectedUrl, hasAjax = false) {
     return resArray;
 }
 
+/**
+ * 
+ * @param {page} pPage web page
+ * @param {string} selector CSS selector
+ * @returns array
+ */
 async function scrapeTable(pPage, selector){
     let selectorIsNumberRegexp = /(#\d+)|(.\d+)/g
     let digitOnlySelectors = selector.match(selectorIsNumberRegexp);
