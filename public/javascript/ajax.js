@@ -22,19 +22,36 @@ async function getScrapedData(requestUrl, urlToScrape, selector, expectedUrl, ha
     });
 }
 
+async function createTable(array){
+    const table = document.createElement('table');
+    const tbody = document.createElement('tbody');
+    for(let row = 0; row < array.length; ++row){
+        let tr = document.createElement('tr');
+        if(array[row]?.length){
+            for(let col = 0; col < array[row].length; ++col){
+                let td = document.createElement('td');
+                td.textContent = array[row][col];
+                tr.append(td);
+            }
+            tbody.append(tr);
+        }
+    }
+    table.append(tbody);
+    return table;
+}
+
 async function main(){
     let urlValue = urlInput.value;
     let selectorValue = selectorInput.value;
     let hasAjaxValue = hasAjaxInput.checked ? 'true' : 'false';
     let expectedUrlValue = expectedUrlInput.value;
 
-    let elements = await getScrapedData(scrapeAPI, urlValue, selectorValue, expectedUrlValue, hasAjaxValue);
-    let textResponse = document.createElement('p');
-    
-    for(let element of elements){
-        textResponse.append(`${element.textContent}\n`)
-    }
-    scrapeRequestWrapper.append(textResponse);
+    let elements = await getScrapedData(scrapeAPI, urlValue, selectorValue);
+    let parsedElements = JSON.parse(elements.responseText);
+
+    let table = await createTable(parsedElements);
+
+    scrapeRequestWrapper.append(table);
 }
 
 scrapeButton.addEventListener('click', main);

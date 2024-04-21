@@ -3,6 +3,14 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const puppeteer = require('puppeteer');
 
+/**
+ * General scraper
+ * @param {page} pPage web page
+ * @param {string} selector CSS selector
+ * @param {string} expectedUrl the URL the ajax takes you to
+ * @param {boolean} hasAjax whether the request requires ajax handling
+ * @returns array
+ */
 async function scrapeRequest(pPage, selector, expectedUrl, hasAjax = false) {
     let resArray = new Array();
     let selectorIsNumberRegexp = /(#\d+)|(.\d+)/g
@@ -48,6 +56,30 @@ async function scrapeRequest(pPage, selector, expectedUrl, hasAjax = false) {
     return resArray;
 }
 
+async function scrapeTable(pPage, selector){
+    let selectorIsNumberRegexp = /(#\d+)|(.\d+)/g
+    let digitOnlySelectors = selector.match(selectorIsNumberRegexp);
+    
+    //Escapes all digit only CSS selectors;
+    if(digitOnlySelectors?.length){
+        let escapedSelectors = await escapeNumberSelector(digitOnlySelectors);
+        for(let i = 0; i < digitOnlySelectors.length; ++i){
+            selector = selector.replace(digitOnlySelectors[i], escapedSelectors[i]);
+        }
+    }
+
+    let result = await pPage.$eval('.table tbody', tbody => [...tbody.rows].
+    map(row => [...row.cells].
+    map(cell => cell.innerText)));
+
+    return result;
+}
+
+/**
+ * Applies a CSSS escape on all selectors that are numbers only
+ * @param {array} numbers strings of numbers only selectors
+ * @returns array
+ */
 async function escapeNumberSelector(numbers){
     let cssEscape = '\\3';
     let escapedSelectors = new Array();
@@ -81,16 +113,17 @@ async function main() {
     app.post('/api/scrape-request', async (req, res) => {
         let urlToScrape = req.body.urlToScrape;
         let selector = req.body.selector;
-        let expectedUrl = req.body.expectedUrl;
-        let hasAjax = req.body.hasAjax == 'true' ? true : false;
+        // let expectedUrl = req.body.expectedUrl;
+        // let hasAjax = req.body.hasAjax == 'true' ? true : false;
 
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
-        
+
         await page.goto(urlToScrape);
         await page.setViewport({ width: 1080, height: 1024 });
         
-        const scrapedData = await scrapeRequest(page, selector, expectedUrl, hasAjax);
+        // const scrapedData = await scrapeRequest(page, selector, expectedUrl, hasAjax);
+        const scrapedData = await scrapeTable(page, selector);
         
         await browser.close();
 
