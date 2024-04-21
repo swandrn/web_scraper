@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/display.css">
     <link rel="stylesheet" href="./css/table.css">
+    <link rel="stylesheet" href="./css/input.css">
     <title>Scraper</title>
 </head>
 
@@ -13,21 +14,31 @@
     <h1>My first Scraper</h1>
     <div id="scrape-request-wrapper">
         <fieldset>
-            <label for="url-input">Website to be scraped: </label>
-            <input type="text" id="url-input">
-            <label for="tag-to-scrape-input">HTML tag to scrape</label>
-            <select id="tag-to-scrape-input">
-                <option value="" selected disabled hidden>Choose tag</option>
-                <option value="table">Table</option>
-                <option value="text">Text</option>
-                <option value="anchor">Anchor</option>
-            </select>
-            <label for="selector-input">Selector to use: </label>
-            <input type="text" id="selector-input">
-            <label for="expected-url-input">Expected URL to receive data</label>
-            <input type="text" id="expected-url-input">
-            <label for="has-ajax-input">Has ajax (check for yes): </label>
-            <input type="checkbox" id="has-ajax-input">
+            <div class="input-text-wrapper">
+                <label for="url-input">URL to scrape</label>
+                <input type="text" id="url-input">
+            </div>
+            <div class="input-select-wrapper">
+                <label for="tag-to-scrape-input">Tag to scrape</label>
+                <select id="tag-to-scrape-input">
+                    <option value="" selected disabled hidden>Choose tag</option>
+                    <option value="table">Table</option>
+                    <option value="text">Text</option>
+                    <option value="anchor">Anchor</option>
+                </select>
+            </div>
+            <div class="input-text-wrapper">
+                <label for="selector-input">Selector to use</label>
+                <input type="text" id="selector-input">
+            </div>
+            <div class="input-text-wrapper">
+                <label for="expected-url-input">Expected URL to receive data</label>
+                <input type="text" id="expected-url-input">
+            </div>
+            <div class="input-checkbox-wrapper">
+                <input type="checkbox" id="has-ajax-input">
+                <label for="has-ajax-input">Has ajax</label>
+            </div>
             <button type="button" id="scrape-button">Scrape</button>
         </fieldset>
     </div>
