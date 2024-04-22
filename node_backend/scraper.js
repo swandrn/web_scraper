@@ -127,7 +127,7 @@ async function scrapeTable(pPage, selector){
         }
     }
 
-    let result = await pPage.$eval('.table tbody', tbody => [...tbody.rows].
+    let result = await pPage.$eval(selector, tbody => [...tbody.rows].
     map(row => [...row.cells].
     map(cell => cell.innerText)));
 
