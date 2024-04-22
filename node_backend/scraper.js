@@ -155,7 +155,30 @@ async function scrapeText(pPage, selector){
     let result = pPage.$$eval(selector, elements => {
         let res = new Array();
         for(let i = 0; i < elements.length; ++i){
-            res.push(elements[i].innerText)
+            res.push(elements[i].innerText);
+        }
+        return res;
+    });
+
+    return result;
+}
+
+async function scrapeImage(pPage, selector){
+    let selectorIsNumberRegexp = /(#\d+)|(.\d+)/g
+    let digitOnlySelectors = selector.match(selectorIsNumberRegexp);
+    
+    //Escapes all digit only CSS selectors;
+    if(digitOnlySelectors?.length){
+        let escapedSelectors = await escapeNumberSelector(digitOnlySelectors);
+        for(let i = 0; i < digitOnlySelectors.length; ++i){
+            selector = selector.replace(digitOnlySelectors[i], escapedSelectors[i]);
+        }
+    }
+
+    let result = pPage.$$eval(selector, elements => {
+        let res = new Array();
+        for(let i = 0; i < elements.length; ++i){
+            res.push(elements[i].src);
         }
         return res;
     });
@@ -222,6 +245,10 @@ async function main() {
                 break;
             case 'anchor':
                 scrapedData = await scrapeAnchor(page, selector, expectedUrl, hasAjax);
+                break;
+            case 'image':
+                scrapedData = await scrapeImage(page, selector);
+                break;
             default:
                 break;
         }

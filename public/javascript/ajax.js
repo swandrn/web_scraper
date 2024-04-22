@@ -53,7 +53,11 @@ async function createTable(array) {
                 let tr = document.createElement('tr');
                 for (let col = 0; col < array[row].length; ++col) {
                     let td = document.createElement('td');
-                    td.textContent = array[row][col];
+                    if(await isImageUrl(array[col])){
+                        td.append(await createImg(array[row][col]));
+                    } else{
+                        td.textContent = array[row][col];
+                    }
                     tr.append(td);
                 }
                 tbody.append(tr);
@@ -80,7 +84,11 @@ async function createTable(array) {
             let tr = document.createElement('tr');
             for (let i = 0; i < keys.length; ++i) {
                 let td = document.createElement('td');
-                td.textContent = array[row][keys[i]];
+                if(await isImageUrl(array[col])){
+                    td.append(await createImg(array[row][keys[i]]));
+                } else{
+                    td.textContent = array[row][keys[i]];
+                }
                 tr.append(td);
             }
             tbody.append(tr);
@@ -94,7 +102,11 @@ async function createTable(array) {
             let tr = document.createElement('tr');
             for (let col = 0; col < array.length; ++col) {
                 let td = document.createElement('td');
-                td.textContent = array[col];
+                if(await isImageUrl(array[col])){
+                    td.append(await createImg(array[col]));
+                } else{
+                    td.textContent = array[col];
+                }
                 tr.append(td);
             }
             tbody.append(tr);
@@ -105,6 +117,34 @@ async function createTable(array) {
     }
 
     return 'Element is not an array';
+}
+
+/**
+ * Create an img HTML element
+ * @param {string} url url of the image
+ * @returns img
+ */
+async function createImg(url){
+    const img = document.createElement('img');
+    img.src = url;
+    return img;
+}
+
+/**
+ * Checks if a string is an image url
+ * @param {string} url url of the element to check
+ * @returns boolean
+ */
+async function isImageUrl(url) {
+    url = url.split('?')[0]; //Remove GET parameters
+    let parts = url.split('.'); //Separate the URL for each period
+    let extension = parts[parts.length-1];
+    extension = extension.toLowerCase();
+    const imageTypes = ['jpg','jpeg','tiff','png','gif','bmp', 'svg'];
+    if(imageTypes.indexOf(extension) !== -1) {
+        return true;   
+    }
+    return false;
 }
 
 /**
@@ -124,6 +164,10 @@ function toggleInputs(event){
         case 'anchor':
             expectedUrlInput.parentElement.classList.remove('hidden');
             hasAjaxInput.parentElement.classList.remove('hidden');
+            break;
+        case 'image':
+            expectedUrlInput.parentElement.classList.add('hidden');
+            hasAjaxInput.parentElement.classList.add('hidden');
             break;
         default:
             break;
