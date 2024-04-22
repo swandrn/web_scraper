@@ -134,6 +134,12 @@ async function scrapeTable(pPage, selector){
     return result;
 }
 
+/**
+ * Text scraper
+ * @param {page} pPage web page
+ * @param {string} selector CSS selector
+ * @returns array
+ */
 async function scrapeText(pPage, selector){
     let selectorIsNumberRegexp = /(#\d+)|(.\d+)/g
     let digitOnlySelectors = selector.match(selectorIsNumberRegexp);
