@@ -39,8 +39,11 @@ async function getScrapedData(requestUrl, urlToScrape, tagToScrape, selector, ex
  * @returns array | string
  */
 async function createTable(array) {
+    const tableWrapper = document.createElement('div');
     const table = document.createElement('table');
     const tbody = document.createElement('tbody');
+
+    tableWrapper.classList.add('table-wrapper');
 
     // True for array
     if (Object.prototype.toString.call(array[0]) === '[object Array]') {
@@ -56,7 +59,8 @@ async function createTable(array) {
                 tbody.append(tr);
             }
             table.append(tbody);
-            return table;
+            tableWrapper.append(table);
+            return tableWrapper;
         } // True for JSON objects
     } else if (Object.prototype.toString.call(array[0]) === '[object Object]') {
         const table = document.createElement('table');
@@ -82,7 +86,8 @@ async function createTable(array) {
             tbody.append(tr);
         }
         table.append(tbody);
-        return table;
+        tableWrapper.append(table);
+        return tableWrapper;
     } else {
         //1D array
         if (!Array.isArray(array[0])) {
@@ -94,7 +99,8 @@ async function createTable(array) {
             }
             tbody.append(tr);
             table.append(tbody);
-            return table;
+            tableWrapper.append(table);
+            return tableWrapper;
         }
     }
 
@@ -142,7 +148,7 @@ async function main(){
     
     //If parsedElement is not an array
     if(!Array.isArray(parsedElement)){
-        elementToDisplay = await createTable(parsedElement);
+        elementToDisplay = parsedElement;
     }
     
     scrapeRequestWrapper.append(elementToDisplay);
