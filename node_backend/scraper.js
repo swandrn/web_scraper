@@ -134,6 +134,29 @@ async function scrapeTable(pPage, selector){
     return result;
 }
 
+async function scrapeText(pPage, selector){
+    let selectorIsNumberRegexp = /(#\d+)|(.\d+)/g
+    let digitOnlySelectors = selector.match(selectorIsNumberRegexp);
+    
+    //Escapes all digit only CSS selectors;
+    if(digitOnlySelectors?.length){
+        let escapedSelectors = await escapeNumberSelector(digitOnlySelectors);
+        for(let i = 0; i < digitOnlySelectors.length; ++i){
+            selector = selector.replace(digitOnlySelectors[i], escapedSelectors[i]);
+        }
+    }
+
+    let result = pPage.$$eval(selector, elements => {
+        let res = new Array();
+        for(let i = 0; i < elements.length; ++i){
+            res.push(elements[i].innerText)
+        }
+        return res;
+    });
+
+    return result;
+}
+
 /**
  * Applies a CSSS escape on all selectors that are numbers only
  * @param {array} numbers strings of numbers only selectors
@@ -189,7 +212,7 @@ async function main() {
                 scrapedData = await scrapeTable(page, selector);
                 break;
             case 'text':
-                scrapedData = await scrapeRequest(page, selector);
+                scrapedData = await scrapeText(page, selector);
                 break;
             case 'anchor':
                 scrapedData = await scrapeAnchor(page, selector, expectedUrl, hasAjax);
