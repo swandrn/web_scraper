@@ -140,7 +140,7 @@ async function isImageUrl(url) {
     let parts = url.split('.'); //Separate the URL for each period
     let extension = parts[parts.length-1];
     extension = extension.toLowerCase();
-    const imageTypes = ['jpg','jpeg','tiff','png','gif','bmp', 'svg'];
+    const imageTypes = ['jpg', 'jpeg', 'tiff', 'png', 'gif', 'bmp', 'svg', 'webp'];
     if(imageTypes.indexOf(extension) !== -1) {
         return true;   
     }
