@@ -105,6 +105,16 @@ async function createTable(array) {
     return 'Element is not an array';
 }
 
+async function createParagraphs(arrayOfText){
+    let paragraphs = new Array();
+    for(let i = 0; i < arrayOfText.length; ++i){
+        const pararaph = document.createElement('p');
+        pararaph.textContent = arrayOfText[i];
+        paragraphs.push(pararaph);
+    }
+    return paragraphs;
+}
+
 /**
  * Create an array of HTML img element
  * @param {array} imagesUrls url of the images
@@ -156,16 +166,19 @@ async function main(){
 
     let elements = await getScrapedData(scrapeAPI, urlValue, tagToScrapeValue, selectorValue, expectedUrlValue, hasAjaxValue);
     let parsedElement = JSON.parse(elements.responseText);
-    let elementToDisplay;
 
     const metaData = parsedElement.shift();
 
     switch (metaData['dataType']) {
         case 'table':
             elementToDisplay = await createTable(parsedElement);
+            scrapeResponseWrapper.append(elementToDisplay);
             break;
         case 'text':
-            elementToDisplay = await createTable(parsedElement);
+            let paragraphs = await createParagraphs(parsedElement);
+            for(let paragraph of paragraphs){
+                scrapeResponseWrapper.append(paragraph);
+            }
             break;
         case 'anchor':
             elementToDisplay = await createTable(parsedElement);
@@ -177,7 +190,7 @@ async function main(){
             }
             break;
         default:
-            scrapeResponseWrapper.append(elementToDisplay);
+            scrapeResponseWrapper.append(parsedElement);
             break;
     }
 }
