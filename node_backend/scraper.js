@@ -66,6 +66,9 @@ async function scrapeRequest(pPage, selector, expectedUrl, hasAjax = false) {
  */
 async function scrapeAnchor(pPage, selector, expectedUrl, hasAjax = false) {
     let resArray = new Array();
+    const metaData = ['anchor'];
+    resArray.push(metaData);
+
     let selectorIsNumberRegexp = /(#\d+)|(.\d+)/g;
     let digitOnlySelectors = selector.match(selectorIsNumberRegexp);
     
@@ -116,6 +119,8 @@ async function scrapeAnchor(pPage, selector, expectedUrl, hasAjax = false) {
  * @returns array
  */
 async function scrapeTable(pPage, selector){
+    const metaData = ['table'];
+
     let selectorIsNumberRegexp = /(#\d+)|(.\d+)/g
     let digitOnlySelectors = selector.match(selectorIsNumberRegexp);
     
@@ -131,6 +136,8 @@ async function scrapeTable(pPage, selector){
     map(row => [...row.cells].
     map(cell => cell.innerText)));
 
+    result.unshift(metaData);
+
     return result;
 }
 
@@ -141,6 +148,8 @@ async function scrapeTable(pPage, selector){
  * @returns array
  */
 async function scrapeText(pPage, selector){
+    const metaData = ['text'];
+    
     let selectorIsNumberRegexp = /(#\d+)|(.\d+)/g
     let digitOnlySelectors = selector.match(selectorIsNumberRegexp);
     
@@ -160,10 +169,14 @@ async function scrapeText(pPage, selector){
         return res;
     });
 
+    result.unshift(metaData);
+
     return result;
 }
 
 async function scrapeImage(pPage, selector){
+    const metaData = ['image'];
+    
     let selectorIsNumberRegexp = /(#\d+)|(.\d+)/g
     let digitOnlySelectors = selector.match(selectorIsNumberRegexp);
     
@@ -174,7 +187,7 @@ async function scrapeImage(pPage, selector){
             selector = selector.replace(digitOnlySelectors[i], escapedSelectors[i]);
         }
     }
-
+    
     let result = pPage.$$eval(selector, elements => {
         let res = new Array();
         for(let i = 0; i < elements.length; ++i){
@@ -182,8 +195,11 @@ async function scrapeImage(pPage, selector){
         }
         return res;
     });
+    
+    let resArray = await result;
+    resArray.unshift(metaData);
 
-    return result;
+    return resArray;
 }
 
 /**
