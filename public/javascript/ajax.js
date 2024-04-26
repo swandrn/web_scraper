@@ -105,6 +105,11 @@ async function createTable(array) {
     return 'Element is not an array';
 }
 
+/**
+ * Create an array of HTML p element
+ * @param {array} arrayOfText array of strings representing the scraped data
+ * @returns array
+ */
 async function createParagraphs(arrayOfText){
     let paragraphs = new Array();
     for(let i = 0; i < arrayOfText.length; ++i){
@@ -118,7 +123,7 @@ async function createParagraphs(arrayOfText){
 /**
  * Create an array of HTML img element
  * @param {array} imagesUrls url of the images
- * @returns img
+ * @returns array
  */
 async function createImgs(imagesUrls){
     let images = new Array();
@@ -182,6 +187,7 @@ async function main(){
             break;
         case 'anchor':
             elementToDisplay = await createTable(parsedElement);
+            scrapeResponseWrapper.append(elementToDisplay);
             break;
         case 'image':
             let images = await createImgs(parsedElement);
