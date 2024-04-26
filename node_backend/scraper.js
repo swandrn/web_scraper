@@ -140,9 +140,10 @@ async function scrapeTable(pPage, selector){
     map(row => [...row.cells].
     map(cell => cell.innerText)));
 
-    result.unshift(metaData);
+    let resArray = await result;
+    resArray.unshift(metaData);
 
-    return result;
+    return resArray;
 }
 
 /**
@@ -175,9 +176,10 @@ async function scrapeText(pPage, selector){
         return res;
     });
 
-    result.unshift(metaData);
+    let resArray = await result;
+    resArray.unshift(metaData);
 
-    return result;
+    return resArray;
 }
 
 async function scrapeImage(pPage, selector){
