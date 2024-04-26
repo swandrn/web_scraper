@@ -1,6 +1,7 @@
 const scrapeAPI = './api/scrape-request';
 
 const scrapeResponseWrapper = document.getElementById('scrape-response-wrapper');
+const errorResponseWrapper = document.getElementById('error-response-wrapper');
 const urlInput = document.getElementById('url-input');
 const selectorInput = document.getElementById('selector-input');
 const tagToScrapeInput = document.getElementById('tag-to-scrape-input');
@@ -174,26 +175,29 @@ async function main(){
 
     const metaData = parsedElement.shift();
 
-    switch (metaData['dataType']) {
+    switch (metaData.dataType) {
         case 'table':
-            elementToDisplay = await createTable(parsedElement);
-            scrapeResponseWrapper.append(elementToDisplay);
+            let table = await createTable(parsedElement);
+            scrapeResponseWrapper.append(table);
             break;
         case 'text':
             let paragraphs = await createParagraphs(parsedElement);
-            for(let paragraph of paragraphs){
-                scrapeResponseWrapper.append(paragraph);
+            for(let i = 0; i < paragraphs.length; ++i){
+                scrapeResponseWrapper.append(paragraphs[i]);
             }
             break;
         case 'anchor':
-            elementToDisplay = await createTable(parsedElement);
-            scrapeResponseWrapper.append(elementToDisplay);
+            let anchors = await createTable(parsedElement);
+            scrapeResponseWrapper.append(anchors);
             break;
         case 'image':
             let images = await createImgs(parsedElement);
-            for(let image of images){
-                scrapeResponseWrapper.append(image);
+            for(let i = 0; i < images.length; ++i){
+                scrapeResponseWrapper.append(images[i]);
             }
+            break;
+        case 'error':
+            errorResponseWrapper.append(metaData.errorMessage);
             break;
         default:
             scrapeResponseWrapper.append(parsedElement);
@@ -201,7 +205,16 @@ async function main(){
     }
 }
 
-scrapeButton.addEventListener('click', main);
+scrapeButton.addEventListener('click', function(){
+    while(scrapeResponseWrapper.firstChild){
+        scrapeResponseWrapper.removeChild(scrapeResponseWrapper.lastChild);
+    }
+    while(errorResponseWrapper.firstChild){
+        errorResponseWrapper.removeChild(errorResponseWrapper.lastChild);
+    }
+    main();
+});
+
 tagToScrapeInput.addEventListener('change', function(event){
     toggleInputs(event);
 });
