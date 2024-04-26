@@ -383,21 +383,24 @@ async function main() {
             await page.goto(`https://${domain}/robots.txt`);
             const robotsTxtContent = await page.evaluate(() => document.body.textContent);
 
-            const robotsTxt = await parseRobotsTxt(robotsTxtContent);
-
-            
-            if(robotsTxt[userAgent]?.length){
-                //Directives specific to this scrape bot
-            } else{
-                //Directives for all bots
-                let disallowedPaths = [];
-                for(let i = 0; i < robotsTxt['*'].disallow.length; ++i){
-                    disallowedPaths.push(robotsTxt['*'].disallow[i].path);
-                }
-
-                for(let i = 0; i < disallowedPaths.length; ++i){
-                    if(urlToScrape.includes(disallowedPaths[i])){
-                        canScrape = false;
+            //If robots.txt is not empty
+            if(robotsTxtContent.length > 0){
+                const robotsTxt = await parseRobotsTxt(robotsTxtContent);
+    
+                
+                if(robotsTxt[userAgent]?.length){
+                    //Directives specific to this scrape bot
+                } else{
+                    //Directives for all bots
+                    let disallowedPaths = [];
+                    for(let i = 0; i < robotsTxt['*'].disallow.length; ++i){
+                        disallowedPaths.push(robotsTxt['*'].disallow[i].path);
+                    }
+    
+                    for(let i = 0; i < disallowedPaths.length; ++i){
+                        if(urlToScrape.includes(disallowedPaths[i])){
+                            canScrape = false;
+                        }
                     }
                 }
             }
@@ -424,7 +427,7 @@ async function main() {
                     scrapedData = await scrapeImage(page, selector);
                     break;
                 default:
-                    scrapedData = 'Select a HTML tag to scrape';
+                    scrapedData = await createError('Select a HTML tag to scrape');
                     break;
             }
         } catch (error) {
