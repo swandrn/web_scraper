@@ -187,6 +187,11 @@ async function escapeNumberSelector(numbers){
     return escapedSelectors;
 }
 
+/**
+ * Parses robots.txt directive blocks
+ * @param {string} robotsTxt content of robots.txt
+ * @returns Object contains the field and value of directive blocks
+ */
 async function parseRobotsTxt(robotsTxt){
     //INSPIRED BY https://github.com/chrisakroyd/robots-txt-parser/blob/master/src/parser.js
     const USER_AGENT = 'user-agent';
@@ -200,7 +205,6 @@ async function parseRobotsTxt(robotsTxt){
     const comments = /#.*$/gm;
     const whitespace = ' ';
     const lineEndings = /[\r\n]+/g;
-    const blockSlices = /(\w+-)?\w+:\s\S*/g;
 
     //Remove comments and whitespaces
     const removeComments = (rawString) => rawString.replace(comments, '');
@@ -311,7 +315,7 @@ async function main() {
         let selector = req.body.selector;
         let expectedUrl = req.body.expectedUrl;
         let hasAjax = req.body.hasAjax == 'true' ? true : false;
-        let matches = urlToScrape.match(/^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i);
+        let matches = urlToScrape.match(/^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i); //Matches the protocol and the domain name of a url
         let domain = matches && matches[1];
         let canScrape = true;
         let scrapedData;
@@ -322,33 +326,39 @@ async function main() {
         const userAgent = 'Coll';
         await page.setUserAgent(userAgent);
 
-        scrape : try {
-            await page.goto(`https://${domain}/robots.txt`);
-            const robotsTxtContent = await page.evaluate(() => document.body.textContent);
+        scrape: try {
+            let robotsTxtExists = false;
+            const response = await page.goto(`https://${domain}/robots.txt`);
+            if(response.ok()){
+                robotsTxtExists = true;
+            }
 
-            //If robots.txt is not empty
-            if(robotsTxtContent.length > 0){
-                const robotsTxt = await parseRobotsTxt(robotsTxtContent);
-    
-                
-                if(robotsTxt[userAgent]?.length){
-                    //Directives specific to this scrape bot
-                } else{
-                    //Directives for all bots
-                    let disallowedPaths = [];
-                    for(let i = 0; i < robotsTxt['*'].disallow.length; ++i){
-                        disallowedPaths.push(robotsTxt['*'].disallow[i].path);
-                    }
-    
-                    for(let i = 0; i < disallowedPaths.length; ++i){
-                        if(urlToScrape.includes(disallowedPaths[i])){
-                            canScrape = false;
+            if (robotsTxtExists) {
+                const robotsTxtContent = await page.evaluate(() => document.body.textContent);
+
+                //If robots.txt is not empty
+                if (robotsTxtContent.length > 0) {
+                    const robotsTxt = await parseRobotsTxt(robotsTxtContent);
+
+                    if (robotsTxt[userAgent]?.length) {
+                        //Directives specific to this scrape bot
+                    } else {
+                        //Directives for all bots
+                        let disallowedPaths = [];
+                        for (let i = 0; i < robotsTxt['*'].disallow.length; ++i) {
+                            disallowedPaths.push(robotsTxt['*'].disallow[i].path);
+                        }
+
+                        for (let i = 0; i < disallowedPaths.length; ++i) {
+                            if (urlToScrape.includes(disallowedPaths[i])) {
+                                canScrape = false;
+                            }
                         }
                     }
                 }
             }
 
-            if(!canScrape){
+            if (!canScrape) {
                 scrapedData = await createError('You cannot scrape this website');
                 break scrape;
             }
