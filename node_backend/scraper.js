@@ -129,6 +129,12 @@ async function scrapeAnchor(pPage, selector, expectedUrl, hasAjax = false) {
     return resArray;
 }
 
+/**
+ * Image scraper
+ * @param {page} pPage web page
+ * @param {string} selector CSS selector
+ * @returns array
+ */
 async function scrapeImage(pPage, selector){
     const metaData = {
         dataType: 'image'
@@ -160,7 +166,7 @@ async function scrapeImage(pPage, selector){
 }
 
 /**
- * Applies a CSSS escape on all selectors that are numbers only
+ * Applies a CSS escape on all selectors that are numbers only
  * @param {array} numbers strings of numbers only selectors
  * @returns array
  */
@@ -208,21 +214,6 @@ async function parseRobotsTxt(robotsTxt){
             value: line.slice(firstColon + 1).trim()
         };
     };
-
-    //I don't know why I need to parse disallow block values
-    // const parsePattern = (pattern) => {
-    //     const regexSpecialChars = /[\-\[\]\/\{\}\(\)\+\?\.\\\^\$\|]/g;
-    //     const wildCard = /\*/g;
-    //     const endOfLine = /\\\$$/;
-    //     const flags = 'm';
-
-    //     const regexString = pattern
-    //         .replace(regexSpecialChars, '\\&')
-    //         .replace(wildCard, '.*')
-    //         .replace(endOfLine, '$');
-
-    //     return new RegExp(regexString, flags);
-    // }
 
     const groupMemberBlock = (value) => ({
         specificity: value.length,
@@ -289,6 +280,11 @@ async function parseRobotsTxt(robotsTxt){
     return robotsObj;
 }
 
+/**
+ * Create an error message
+ * @param {string} message the error message to display
+ * @returns array
+ */
 async function createError(message){
     return [{
         dataType: 'error',
