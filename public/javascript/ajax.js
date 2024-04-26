@@ -1,6 +1,6 @@
 const scrapeAPI = './api/scrape-request';
 
-const scrapeRequestWrapper = document.getElementById('scrape-request-wrapper');
+const scrapeResponseWrapper = document.getElementById('scrape-response-wrapper');
 const urlInput = document.getElementById('url-input');
 const selectorInput = document.getElementById('selector-input');
 const tagToScrapeInput = document.getElementById('tag-to-scrape-input');
@@ -53,11 +53,7 @@ async function createTable(array) {
                 let tr = document.createElement('tr');
                 for (let col = 0; col < array[row].length; ++col) {
                     let td = document.createElement('td');
-                    if(await isImageUrl(array[col])){
-                        td.append(await createImg(array[row][col]));
-                    } else{
-                        td.textContent = array[row][col];
-                    }
+                    td.textContent = array[row][col];
                     tr.append(td);
                 }
                 tbody.append(tr);
@@ -84,11 +80,7 @@ async function createTable(array) {
             let tr = document.createElement('tr');
             for (let i = 0; i < keys.length; ++i) {
                 let td = document.createElement('td');
-                if(await isImageUrl(array[col])){
-                    td.append(await createImg(array[row][keys[i]]));
-                } else{
-                    td.textContent = array[row][keys[i]];
-                }
+                td.textContent = array[row][keys[i]];
                 tr.append(td);
             }
             tbody.append(tr);
@@ -102,11 +94,7 @@ async function createTable(array) {
             let tr = document.createElement('tr');
             for (let col = 0; col < array.length; ++col) {
                 let td = document.createElement('td');
-                if(await isImageUrl(array[col])){
-                    td.append(await createImg(array[col]));
-                } else{
-                    td.textContent = array[col];
-                }
+                td.textContent = array[col];
                 tr.append(td);
             }
             tbody.append(tr);
@@ -120,31 +108,18 @@ async function createTable(array) {
 }
 
 /**
- * Create an img HTML element
- * @param {string} url url of the image
+ * Create an array of HTML img element
+ * @param {array} imagesUrls url of the images
  * @returns img
  */
-async function createImg(url){
-    const img = document.createElement('img');
-    img.src = url;
-    return img;
-}
-
-/**
- * Checks if a string is an image url
- * @param {string} url url of the element to check
- * @returns boolean
- */
-async function isImageUrl(url) {
-    url = url.split('?')[0]; //Remove GET parameters
-    let parts = url.split('.'); //Separate the URL for each period
-    let extension = parts[parts.length-1];
-    extension = extension.toLowerCase();
-    const imageTypes = ['jpg', 'jpeg', 'tiff', 'png', 'gif', 'bmp', 'svg', 'webp'];
-    if(imageTypes.indexOf(extension) !== -1) {
-        return true;   
+async function createImgs(imagesUrls){
+    let images = new Array();
+    for(let i = 0; i < imagesUrls.length; ++i){
+        const img = document.createElement('img');
+        img.src = imagesUrls[i];
+        images.push(img);
     }
-    return false;
+    return images;
 }
 
 /**
@@ -185,17 +160,28 @@ async function main(){
     let parsedElement = JSON.parse(elements.responseText);
     let elementToDisplay;
 
-    //If parsedElement is an array
-    if(Array.isArray(parsedElement)){
-        elementToDisplay = await createTable(parsedElement);
+    const metaData = parsedElement.shift();
+
+    switch (metaData[0]) {
+        case 'table':
+            elementToDisplay = await createTable(parsedElement);
+            break;
+        case 'text':
+            elementToDisplay = await createTable(parsedElement);
+            break;
+        case 'anchor':
+            elementToDisplay = await createTable(parsedElement);
+            break;
+        case 'image':
+            let images = await createImgs(parsedElement);
+            for(let image of images){
+                scrapeResponseWrapper.append(image);
+            }
+            break;
+        default:
+            scrapeResponseWrapper.append(elementToDisplay);
+            break;
     }
-    
-    //If parsedElement is not an array
-    if(!Array.isArray(parsedElement)){
-        elementToDisplay = parsedElement;
-    }
-    
-    scrapeRequestWrapper.append(elementToDisplay);
 }
 
 scrapeButton.addEventListener('click', main);
