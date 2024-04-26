@@ -13,3 +13,8 @@
     border: 1px solid lightgray;
     margin: .1rem;
 }
+
+#scrape-response-wrapper p{
+    border: 1px solid lightgray;
+    margin: .1rem;
+}
