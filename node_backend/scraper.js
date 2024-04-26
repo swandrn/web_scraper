@@ -227,32 +227,40 @@ async function main() {
         let selector = req.body.selector;
         let expectedUrl = req.body.expectedUrl;
         let hasAjax = req.body.hasAjax == 'true' ? true : false;
+        let scrapedData;
 
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
 
-        await page.goto(urlToScrape);
-        await page.setViewport({ width: 1080, height: 1024 });
-        
-        let scrapedData;
+        const userAgent = 'Coll';
+        await page.setUserAgent(userAgent);
 
-        switch (tagToScrape) {
-            case 'table':
-                scrapedData = await scrapeTable(page, selector);
-                break;
-            case 'text':
-                scrapedData = await scrapeText(page, selector);
-                break;
-            case 'anchor':
-                scrapedData = await scrapeAnchor(page, selector, expectedUrl, hasAjax);
-                break;
-            case 'image':
-                scrapedData = await scrapeImage(page, selector);
-                break;
-            default:
-                break;
+        try {
+            await page.goto(urlToScrape);
+            await page.setViewport({ width: 1080, height: 1024 });
+
+
+            switch (tagToScrape) {
+                case 'table':
+                    scrapedData = await scrapeTable(page, selector);
+                    break;
+                case 'text':
+                    scrapedData = await scrapeText(page, selector);
+                    break;
+                case 'anchor':
+                    scrapedData = await scrapeAnchor(page, selector, expectedUrl, hasAjax);
+                    break;
+                case 'image':
+                    scrapedData = await scrapeImage(page, selector);
+                    break;
+                default:
+                    scrapedData = 'Select a HTML tag to scrape';
+                    break;
+            }
+        } catch (error) {
+            scrapedData = error.message;
         }
-        
+
         await browser.close();
 
         res.type('json');
