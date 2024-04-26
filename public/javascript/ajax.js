@@ -63,8 +63,6 @@ async function createTable(array) {
             return tableWrapper;
         } // True for JSON objects
     } else if (Object.prototype.toString.call(array[0]) === '[object Object]') {
-        const table = document.createElement('table');
-        const tbody = document.createElement('tbody');
         const keys = Object.keys(array[0]);
 
         //Append table headers
