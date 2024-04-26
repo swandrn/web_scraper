@@ -253,6 +253,8 @@ async function main() {
         let selector = req.body.selector;
         let expectedUrl = req.body.expectedUrl;
         let hasAjax = req.body.hasAjax == 'true' ? true : false;
+        let matches = urlToScrape.match(/^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i);
+        let domain = matches && matches[1];
         let scrapedData;
 
         const browser = await puppeteer.launch();
@@ -264,7 +266,6 @@ async function main() {
         try {
             await page.goto(urlToScrape);
             await page.setViewport({ width: 1080, height: 1024 });
-
 
             switch (tagToScrape) {
                 case 'table':
