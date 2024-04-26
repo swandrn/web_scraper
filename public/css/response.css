@@ -1,0 +1,15 @@
+#scrape-response-wrapper{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+#scrape-response-wrapper img {
+    display: block;
+    max-width:230px;
+    max-height:95px;
+    width: auto;
+    height: auto;
+    border: 1px solid lightgray;
+    margin: .1rem;
+}
