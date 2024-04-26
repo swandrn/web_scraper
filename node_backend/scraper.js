@@ -340,13 +340,18 @@ async function main() {
                 if (robotsTxtContent.length > 0) {
                     const robotsTxt = await parseRobotsTxt(robotsTxtContent);
 
-                    if (robotsTxt[userAgent]?.length) {
+                    block : if (robotsTxt[userAgent]?.length) {
                         //Directives specific to this scrape bot
                     } else {
                         //Directives for all bots
                         let disallowedPaths = [];
                         for (let i = 0; i < robotsTxt['*'].disallow.length; ++i) {
                             disallowedPaths.push(robotsTxt['*'].disallow[i].path);
+                        }
+
+                        if(disallowedPaths.indexOf('/') !== -1){
+                            canScrape = false;
+                            break block;
                         }
 
                         for (let i = 0; i < disallowedPaths.length; ++i) {
