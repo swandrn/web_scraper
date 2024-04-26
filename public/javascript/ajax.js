@@ -160,7 +160,7 @@ async function main(){
 
     const metaData = parsedElement.shift();
 
-    switch (metaData[0]) {
+    switch (metaData['dataType']) {
         case 'table':
             elementToDisplay = await createTable(parsedElement);
             break;

@@ -66,7 +66,9 @@ async function scrapeRequest(pPage, selector, expectedUrl, hasAjax = false) {
  */
 async function scrapeAnchor(pPage, selector, expectedUrl, hasAjax = false) {
     let resArray = new Array();
-    const metaData = ['anchor'];
+    const metaData = {
+        dataType: 'anchor'
+    };
     resArray.push(metaData);
 
     let selectorIsNumberRegexp = /(#\d+)|(.\d+)/g;
@@ -119,7 +121,9 @@ async function scrapeAnchor(pPage, selector, expectedUrl, hasAjax = false) {
  * @returns array
  */
 async function scrapeTable(pPage, selector){
-    const metaData = ['table'];
+    const metaData = {
+        dataType: 'table'
+    };
 
     let selectorIsNumberRegexp = /(#\d+)|(.\d+)/g
     let digitOnlySelectors = selector.match(selectorIsNumberRegexp);
@@ -148,7 +152,9 @@ async function scrapeTable(pPage, selector){
  * @returns array
  */
 async function scrapeText(pPage, selector){
-    const metaData = ['text'];
+    const metaData = {
+        dataType: 'text'
+    };
     
     let selectorIsNumberRegexp = /(#\d+)|(.\d+)/g
     let digitOnlySelectors = selector.match(selectorIsNumberRegexp);
@@ -175,7 +181,9 @@ async function scrapeText(pPage, selector){
 }
 
 async function scrapeImage(pPage, selector){
-    const metaData = ['image'];
+    const metaData = {
+        dataType: 'image'
+    };
     
     let selectorIsNumberRegexp = /(#\d+)|(.\d+)/g
     let digitOnlySelectors = selector.match(selectorIsNumberRegexp);
