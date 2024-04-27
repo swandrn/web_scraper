@@ -7,6 +7,8 @@ const selectorInput = document.getElementById('selector-input');
 const tagToScrapeInput = document.getElementById('tag-to-scrape-input');
 const expectedUrlInput = document.getElementById('expected-url-input');
 const hasAjaxInput = document.getElementById('has-ajax-input');
+const maxScrollsInput = document.getElementById('max-scrolls-input');
+const scrollSpeedInput = document.getElementById('scroll-speed-input');
 const scrapeButton = document.getElementById('scrape-button');
 
 /**
@@ -19,8 +21,10 @@ const scrapeButton = document.getElementById('scrape-button');
  * @param {string} hasAjax whether the scrape request requires AJAX handling
  * @returns Promise<XMLHttpRequest>
  */
-async function getScrapedData(requestUrl, urlToScrape, tagToScrape, selector, expectedUrl, hasAjax){
-    let params = `urlToScrape=${urlToScrape}&tagToScrape=${tagToScrape}&selector=${selector}&expectedUrl=${expectedUrl}&hasAjax=${hasAjax}`;
+async function getScrapedData(requestUrl, urlToScrape, tagToScrape, selector, expectedUrl, hasAjax, maxScrolls, scrollSpeed){
+    let params = 
+    `urlToScrape=${urlToScrape}&tagToScrape=${tagToScrape}&selector=${selector}
+    &expectedUrl=${expectedUrl}&hasAjax=${hasAjax}&maxScrolls=${maxScrolls}&scrollSpeed=${scrollSpeed}`;
     return new Promise(function (resolve, reject){
         const request = new XMLHttpRequest();
         request.open('POST', requestUrl);
@@ -184,10 +188,12 @@ async function main(){
     let urlValue = urlInput.value;
     let tagToScrapeValue = tagToScrapeInput.value;
     let selectorValue = selectorInput.value;
-    let hasAjaxValue = hasAjaxInput.checked ? 'true' : 'false';
     let expectedUrlValue = expectedUrlInput.value;
+    let hasAjaxValue = hasAjaxInput.checked ? 'true' : 'false';
+    let maxScrolls = maxScrollsInput.value;
+    let scrollSpeed = scrollSpeedInput.value;
 
-    let elements = await getScrapedData(scrapeAPI, urlValue, tagToScrapeValue, selectorValue, expectedUrlValue, hasAjaxValue);
+    let elements = await getScrapedData(scrapeAPI, urlValue, tagToScrapeValue, selectorValue, expectedUrlValue, hasAjaxValue, maxScrolls, scrollSpeed);
     let parsedElement = JSON.parse(elements.responseText);
 
     const metaData = parsedElement.shift();
