@@ -82,7 +82,8 @@ async function scrapeText(pPage, selector){
 async function scrapeAnchor(pPage, selector, expectedUrl, hasAjax = false) {
     let resArray = new Array();
     const metaData = {
-        dataType: 'anchor'
+        dataType: 'anchor',
+        hasAjax : hasAjax
     };
     resArray.push(metaData);
 
@@ -102,7 +103,7 @@ async function scrapeAnchor(pPage, selector, expectedUrl, hasAjax = false) {
     if (!hasAjax) {
         if (elements?.length) {
             for (let row = 0; row < elements.length; ++row) {
-                const el = await pPage.evaluate(el => el.textContent.trim(), elements[row]);
+                const el = await pPage.evaluate(el => el.href, elements[row]);
                 resArray.push(el);
             }
         }
