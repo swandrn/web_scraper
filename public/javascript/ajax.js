@@ -126,12 +126,13 @@ async function createParagraphs(arrayOfText){
  * @param {array} arrayOfHref array of urls scraped
  * @returns array
  */
-async function createAnchors(arrayOfHref){
+async function createAnchors(arrayOfAnchors){
+    console.log(arrayOfAnchors);
     let anchors = new Array();
-    for(let i = 0; i < arrayOfHref.length; ++i){
-        const anchor = document.createElement('a');
-        anchor.href = arrayOfHref[i];
-        anchor.textContent = `link${i}`;
+    for(let i = 0; i < arrayOfAnchors.length; ++i){
+        const template = document.createElement('template');
+        template.innerHTML = arrayOfAnchors[i];
+        const anchor = template.content.firstChild
         anchors.push(anchor);
     }
     return anchors;
@@ -241,3 +242,7 @@ scrapeButton.addEventListener('click', function(){
 tagToScrapeInput.addEventListener('change', function(event){
     toggleInputs(event);
 });
+
+
+let a = document.querySelector('#test-anchor');
+console.log(a.textContent);
