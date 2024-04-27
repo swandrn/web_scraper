@@ -123,11 +123,10 @@ async function createParagraphs(arrayOfText){
 
 /**
  * Create array of HTML anchor elements
- * @param {array} arrayOfHref array of urls scraped
+ * @param {array} arrayOfAnchors array of outerHTML strings
  * @returns array
  */
 async function createAnchors(arrayOfAnchors){
-    console.log(arrayOfAnchors);
     let anchors = new Array();
     for(let i = 0; i < arrayOfAnchors.length; ++i){
         const template = document.createElement('template');
@@ -140,15 +139,16 @@ async function createAnchors(arrayOfAnchors){
 
 /**
  * Create an array of HTML img element
- * @param {array} imagesUrls url of the images
+ * @param {array} arrayOfImages array of outerHTML strings
  * @returns array
  */
-async function createImgs(imagesUrls){
+async function createImgs(arrayOfImages){
     let images = new Array();
-    for(let i = 0; i < imagesUrls.length; ++i){
-        const img = document.createElement('img');
-        img.src = imagesUrls[i];
-        images.push(img);
+    for(let i = 0; i < arrayOfImages.length; ++i){
+        const template = document.createElement('template');
+        template.innerHTML = arrayOfImages[i];
+        const image = template.content.firstChild;
+        images.push(image);
     }
     return images;
 }
@@ -242,7 +242,3 @@ scrapeButton.addEventListener('click', function(){
 tagToScrapeInput.addEventListener('change', function(event){
     toggleInputs(event);
 });
-
-
-let a = document.querySelector('#test-anchor');
-console.log(a.textContent);
