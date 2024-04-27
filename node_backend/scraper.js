@@ -286,6 +286,25 @@ async function parseRobotsTxt(robotsTxt){
     return robotsObj;
 }
 
+async function autoScroll(pPage){
+    await pPage.evaluate(async () => {
+        await new Promise((resolve) => {
+            let totalHeight = 0;
+            let distance = 100;
+            let timer = setInterval(() => {
+                let scrollHeight = document.body.scrollHeight;
+                window.scrollBy(0, distance);
+                totalHeight += distance;
+
+                if(totalHeight >= scrollHeight - window.innerHeight){
+                    clearInterval(timer);
+                    resolve();
+                }
+            });
+        });
+    });
+}
+
 /**
  * Create an error message
  * @param {string} message the error message to display
@@ -370,8 +389,11 @@ async function main() {
                 break scrape;
             }
 
-            await page.goto(urlToScrape);
+            await page.goto(urlToScrape, {"waitUntil" : "networkidle0"});
             await page.setViewport({ width: 1080, height: 1024 });
+
+            //Scroll the whole page to load all elements
+            await autoScroll(page);
 
             switch (tagToScrape) {
                 case 'table':
