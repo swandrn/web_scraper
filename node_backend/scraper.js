@@ -344,6 +344,8 @@ async function main() {
         let selector = req.body.selector;
         let expectedUrl = req.body.expectedUrl;
         let hasAjax = req.body.hasAjax == 'true' ? true : false;
+        let maxScrolls = parseInt(req.body.maxScrolls);
+        let scrollSpeed = parseInt(req.body.scrollSpeed);
         let matches = urlToScrape.match(/^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i); //Matches the protocol and the domain name of a url
         let domain = matches && matches[1];
         let canScrape = true;
@@ -401,7 +403,7 @@ async function main() {
             await page.setViewport({ width: 1200, height: 800 });
 
             //Scroll the whole page to load all elements
-            await autoScroll(page);
+            await autoScroll(page, maxScrolls, scrollSpeed);
 
             switch (tagToScrape) {
                 case 'table':
