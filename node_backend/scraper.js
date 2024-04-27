@@ -155,18 +155,16 @@ async function scrapeImage(pPage, selector){
         }
     }
     
-    let result = pPage.$$eval(selector, elements => {
+    let result = await pPage.$$eval(selector, elements => {
         let res = new Array();
         for(let i = 0; i < elements.length; ++i){
-            res.push(elements[i].src);
+            res.push(elements[i].outerHTML);
         }
         return res;
     });
     
-    let resArray = await result;
-    resArray.unshift(metaData);
-
-    return resArray;
+    result.unshift(metaData);
+    return result;
 }
 
 /**
