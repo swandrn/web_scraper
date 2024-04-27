@@ -132,7 +132,7 @@ async function createAnchors(arrayOfAnchors){
     for(let i = 0; i < arrayOfAnchors.length; ++i){
         const template = document.createElement('template');
         template.innerHTML = arrayOfAnchors[i];
-        const anchor = template.content.firstChild
+        const anchor = template.content.firstChild;
         anchors.push(anchor);
     }
     return anchors;
