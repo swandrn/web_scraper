@@ -97,17 +97,20 @@ async function scrapeAnchor(pPage, selector, expectedUrl, hasAjax = false) {
             selector = selector.replace(digitOnlySelectors[i], escapedSelectors[i]);
         }
     }
+    
+    if (!hasAjax) {
+        let result = await pPage.$$eval(selector, elements => {
+            let res = new Array();
+            for(let i = 0; i < elements.length; ++i){
+                res.push(elements[i].outerHTML);
+            }
+            return res;
+        });
+        result.unshift(metaData);
+        return result;
+    }
 
     let elements = await pPage.$$(selector);
-
-    if (!hasAjax) {
-        if (elements?.length) {
-            for (let row = 0; row < elements.length; ++row) {
-                const el = await pPage.evaluate(el => el.href, elements[row]);
-                resArray.push(el);
-            }
-        }
-    }
 
     if (hasAjax) {
         if (elements?.length) {
