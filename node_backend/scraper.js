@@ -296,7 +296,7 @@ async function autoScroll(pPage, maxScrolls = 500, scrollSpeed = 50){
     await pPage.evaluate(async (maxScrolls, scrollSpeed) => {
         await new Promise((resolve) => {
             let totalHeight = 0;
-            let distance = 200;
+            let distance = 600;
             let scrolls = 0;
             let timer = setInterval(() => {
                 let scrollHeight = document.body.scrollHeight;

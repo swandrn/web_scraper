@@ -22,8 +22,7 @@ const scrapeButton = document.getElementById('scrape-button');
  * @returns Promise<XMLHttpRequest>
  */
 async function getScrapedData(requestUrl, urlToScrape, tagToScrape, selector, expectedUrl, hasAjax, maxScrolls, scrollSpeed){
-    let params = 
-    `urlToScrape=${urlToScrape}&tagToScrape=${tagToScrape}&selector=${selector}
+    let params = `urlToScrape=${urlToScrape}&tagToScrape=${tagToScrape}&selector=${selector}
     &expectedUrl=${expectedUrl}&hasAjax=${hasAjax}&maxScrolls=${maxScrolls}&scrollSpeed=${scrollSpeed}`;
     return new Promise(function (resolve, reject){
         const request = new XMLHttpRequest();
