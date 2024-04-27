@@ -292,7 +292,7 @@ async function parseRobotsTxt(robotsTxt){
  * @param {int} maxScrolls amount of scrolls before the function ends
  * @param {int} scrollSpeed interval at which to scroll in ms - 100 if not set
  */
-async function autoScroll(pPage, maxScrolls, scrollSpeed = 100){
+async function autoScroll(pPage, maxScrolls = 10, scrollSpeed = 100){
     await pPage.evaluate(async (maxScrolls, scrollSpeed) => {
         await new Promise((resolve) => {
             let totalHeight = 0;
