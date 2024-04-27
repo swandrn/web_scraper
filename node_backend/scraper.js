@@ -290,13 +290,13 @@ async function parseRobotsTxt(robotsTxt){
  * Scrolls the whole body of a page
  * @param {page} pPage web page
  * @param {int} maxScrolls amount of scrolls before the function ends
- * @param {int} scrollSpeed interval at which to scroll in ms - 100 if not set
+ * @param {int} scrollSpeed interval at which to scroll in ms - 50 if not set
  */
-async function autoScroll(pPage, maxScrolls = 10, scrollSpeed = 100){
+async function autoScroll(pPage, maxScrolls = 500, scrollSpeed = 50){
     await pPage.evaluate(async (maxScrolls, scrollSpeed) => {
         await new Promise((resolve) => {
             let totalHeight = 0;
-            let distance = 100;
+            let distance = 200;
             let scrolls = 0;
             let timer = setInterval(() => {
                 let scrollHeight = document.body.scrollHeight;
@@ -401,7 +401,7 @@ async function main() {
             await page.setViewport({ width: 1200, height: 800 });
 
             //Scroll the whole page to load all elements
-            await autoScroll(page, 500);
+            await autoScroll(page);
 
             switch (tagToScrape) {
                 case 'table':
