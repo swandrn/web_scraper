@@ -286,23 +286,31 @@ async function parseRobotsTxt(robotsTxt){
     return robotsObj;
 }
 
-async function autoScroll(pPage){
-    await pPage.evaluate(async () => {
+/**
+ * Scrolls the whole body of a page
+ * @param {page} pPage web page
+ * @param {int} maxScrolls amount of scrolls before the function ends
+ * @param {int} scrollSpeed interval at which to scroll in ms - 100 if not set
+ */
+async function autoScroll(pPage, maxScrolls, scrollSpeed = 100){
+    await pPage.evaluate(async (maxScrolls, scrollSpeed) => {
         await new Promise((resolve) => {
             let totalHeight = 0;
             let distance = 100;
+            let scrolls = 0;
             let timer = setInterval(() => {
                 let scrollHeight = document.body.scrollHeight;
                 window.scrollBy(0, distance);
                 totalHeight += distance;
+                scrolls++;
 
-                if(totalHeight >= scrollHeight - window.innerHeight){
+                if(totalHeight >= scrollHeight - window.innerHeight || scrolls >= maxScrolls){
                     clearInterval(timer);
                     resolve();
                 }
-            });
+            }, scrollSpeed);
         });
-    });
+    }, maxScrolls, scrollSpeed);
 }
 
 /**
@@ -390,10 +398,10 @@ async function main() {
             }
 
             await page.goto(urlToScrape, {"waitUntil" : "networkidle0"});
-            await page.setViewport({ width: 1080, height: 1024 });
+            await page.setViewport({ width: 1200, height: 800 });
 
             //Scroll the whole page to load all elements
-            await autoScroll(page);
+            await autoScroll(page, 500);
 
             switch (tagToScrape) {
                 case 'table':
