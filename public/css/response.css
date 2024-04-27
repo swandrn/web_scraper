@@ -14,7 +14,8 @@
     margin: .1rem;
 }
 
-#scrape-response-wrapper p{
+#scrape-response-wrapper p,
+#scrape-response-wrapper a{
     border: 1px solid lightgray;
     margin: .1rem;
 }
