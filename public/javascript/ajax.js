@@ -122,6 +122,22 @@ async function createParagraphs(arrayOfText){
 }
 
 /**
+ * Create array of HTML anchor elements
+ * @param {array} arrayOfHref array of urls scraped
+ * @returns array
+ */
+async function createAnchors(arrayOfHref){
+    let anchors = new Array();
+    for(let i = 0; i < arrayOfHref.length; ++i){
+        const anchor = document.createElement('a');
+        anchor.href = arrayOfHref[i];
+        anchor.textContent = `link${i}`;
+        anchors.push(anchor);
+    }
+    return anchors;
+}
+
+/**
  * Create an array of HTML img element
  * @param {array} imagesUrls url of the images
  * @returns array
@@ -187,8 +203,15 @@ async function main(){
             }
             break;
         case 'anchor':
-            let anchors = await createTable(parsedElement);
-            scrapeResponseWrapper.append(anchors);
+            if(metaData.hasAjax){
+                let anchorContent = await createTable(parsedElement);
+                scrapeResponseWrapper.append(anchorContent);
+            } else{
+                let anchors = await createAnchors(parsedElement);
+                for(let i = 0; i < anchors.length; ++i){
+                    scrapeResponseWrapper.append(anchors[i]);
+                }
+            }
             break;
         case 'image':
             let images = await createImgs(parsedElement);
