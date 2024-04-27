@@ -18,7 +18,7 @@
     <div class="heading-wrapper">
         <h1>Coll</h1>
     </div>
-    <div id="scrape-request-wrapper">
+    <div id="scrape-request-wrapper" class="relative">
         <fieldset>
             <div class="input-select-wrapper">
                 <label for="tag-to-scrape-input">Tag to scrape</label>
@@ -48,6 +48,16 @@
             </div>
             <button type="button" id="scrape-button">Scrape</button>
         </fieldset>
+        <div class="additional absolute">
+            <div class="input-text-wrapper">
+                <label for="max-scrolls-input">Amount of scrolls</label>
+                <input type="text" id="max-scrolls-input">
+            </div>
+            <div class="input-text-wrapper">
+                <label for="scroll-speed-input">Scroll speed &lpar;ms&rpar;</label>
+                <input type="text" id="scroll-speed-input">
+            </div>
+        </div>
     </div>
     <div id="scrape-response-wrapper"></div>
     <div id="error-response-wrapper"></div>

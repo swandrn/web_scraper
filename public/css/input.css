@@ -1,3 +1,11 @@
+.relative{
+    position: relative;
+}
+
+.absolute{
+    position: absolute;
+}
+
 fieldset {
     margin: 2rem 0;
     border: 0;
@@ -70,4 +78,12 @@ button {
 button:hover {
     background-color: #008CBA;
     color: white;
+}
+
+.additional{
+    top: 100%;
+    right: 0;
+    display: flex;
+    flex-direction: row;
+    height: 2em;
 }
